@@ -1,0 +1,76 @@
+export const gscData = {
+  performance: {
+    queries: [
+      {
+        query: "best seo practices 2024",
+        page: "https://www.your-site.com/seo-guide",
+        country: "US",
+        clicks: 1500,
+        impressions: 25000,
+        ctr: 0.06,
+        position: 2.5,
+      },
+      {
+        query: "how to improve website speed",
+        page: "https://www.your-site.com/blog/speed-optimization",
+        country: "CA",
+        clicks: 800,
+        impressions: 12000,
+        ctr: 0.0667,
+        position: 4.1,
+      },
+      {
+        query: "local seo guide",
+        page: "https://www.your-site.com/blog/local-seo",
+        country: "GB",
+        clicks: 50,
+        impressions: 1200,
+        ctr: 0.0417,
+        position: 8.9,
+      },
+    ],
+    summary: {
+      totalClicks: 2350,
+      totalImpressions: 38200,
+      avgCTR: 0.061,
+      avgPosition: 5.17,
+    },
+  },
+  indexing: {
+    status: "PASS",
+    coverageState: "Page is indexed",
+    robotsTxtState: "Allowed",
+    indexingState: "INDEXED",
+    lastCrawlTime: "2025-08-18",
+    pageFetchState: "SUCCESSFUL",
+    indexingResult: "The URL is on Google",
+  },
+  mobileUsability: {
+    status: "PASS",
+    issues: [],
+  },
+  richResults: {
+    status: "PASS",
+    typesDetected: ["FAQ", "Product"],
+  },
+  sitemaps: [
+    {
+      path: "https://www.your-site.com/sitemap_index.xml",
+      submitted: true,
+      lastSubmitted: "2025-08-18",
+      lastRead: "2025-08-19",
+      warnings: 0,
+      errors: 0,
+      unindexedUrls: 5,
+    },
+    {
+      path: "https://www.your-site.com/blog-sitemap.xml",
+      submitted: true,
+      lastSubmitted: "2025-08-17",
+      lastRead: "2025-08-17",
+      warnings: 2,
+      errors: 1,
+      unindexedUrls: 20,
+    },
+  ],
+};

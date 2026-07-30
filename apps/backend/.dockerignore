@@ -1,0 +1,46 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+.pytest_cache/
+*.ruff_cache/
+.venv/
+env/
+venv/
+
+# Build & dist
+build/
+dist/
+*.egg-info/
+
+# Environment files (sensitive)
+.env
+.env.*
+*.secret
+
+# Logs
+*.log
+logs/
+*.pid
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+
+# Git
+.git
+.gitignore
+
+# IDE configs
+.vscode/
+.idea/
+*.swp
+
+# Misc
+*.bak
+*.tmp
+
+kill_python.cmd
+centered-cable-469617-h6-8cb2516ce83f.json

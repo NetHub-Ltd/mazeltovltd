@@ -1,0 +1,52 @@
+name: Docker Build & Push on Tag
+
+on:
+  push:
+    tags:
+      - '*'  # any tag triggers this workflow
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ${{secrets.IMAGE_NAME}}  # replace with your actual repo
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
+    steps:
+      # 1. Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Log in to Docker Hub using PAT stored in secrets
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}  # PAT instead of password
+
+      # 3. Extract git tag
+      - name: Extract tag
+        id: extract_tag
+        run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      # 4. Build Docker image
+      - name: Build Docker image
+        run: |
+          IMAGE="${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${TAG}"
+          echo "Building $IMAGE"
+          docker build -t $IMAGE .
+
+      # 5. Push Docker image
+      - name: Push Docker image
+        run: |
+          IMAGE="${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${TAG}"
+          echo "Pushing $IMAGE"
+          docker push $IMAGE
+
+      # 6. Optional: tag as latest
+      - name: Tag and push latest
+        run: |
+          IMAGE="${DOCKERHUB_USERNAME}/${IMAGE_NAME}:latest"
+          echo "Tagging and pushing latest"
+          docker tag "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${TAG}" $IMAGE
+          docker push $IMAGE
