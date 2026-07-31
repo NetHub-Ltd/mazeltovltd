@@ -19,4 +19,4 @@ EXPOSE 8000
 # Environment for gunicorn config
 
 # START WITH UVICORN
-CMD ["uvicorn", "app.main:app"]
+CMD ["fastapi", "run"]
