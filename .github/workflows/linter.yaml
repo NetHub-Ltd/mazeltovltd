@@ -1,6 +1,4 @@
-# .github/workflows/ci.yml
-name: Build and Lint
-
+name: Build and Lint Frontend
 on:
   push:
     branches:
@@ -10,26 +8,31 @@ jobs:
   build-and-lint:
     runs-on: ubuntu-latest
 
-    steps:
-      # 1. Checkout the repo
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    defaults:
+      run:
+        working-directory: apps/frontend
 
-      # 2. Set up Node.js
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Node.js with lockfile path for sub-directory caching
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: "npm"
+          cache-dependency-path: apps/frontend/package-lock.json
 
-      # 3. Install dependencies
+      # 3. Install dependencies inside apps/frontend
       - name: Install dependencies
         run: npm ci
 
-      # 4. Run linter
+      # 4. Run ESLint (using apps/frontend/eslint.config.mjs)
       - name: Run ESLint
         run: npm run lint
 
-      # 5. Build Next.js project to check for errors
+      # 5. Build Next.js project to check for production/type errors
       - name: Run build
         run: npm run build
