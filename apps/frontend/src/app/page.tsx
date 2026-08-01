@@ -90,7 +90,7 @@ const HomePage = () => {
             </section>
 
             {/* Right: conversion card (compact, focused CTA) */}
-            <div className="hidden md:block order-first md:order-last">
+            <div className="hidden">
               <QuickTopUpForm />
             </div>
           </div>
