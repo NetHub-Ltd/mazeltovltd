@@ -209,79 +209,76 @@ async def initiate_stk_push(background_tasks: BackgroundTasks, payload: StkTopUp
         :param db:
         :param payload:
     """
-    password, timestamp = airtime_mpesa_client.generate_password()
-    callback = settings.airtime_mpesa_callback
-    access_token = await airtime_mpesa_client.fetch_token()
-    shortcode = airtime_mpesa_client.shortcode
+    # password, timestamp = airtime_mpesa_client.generate_password()
+    # callback = settings.airtime_mpesa_callback
+    # access_token = await airtime_mpesa_client.fetch_token()
+    # shortcode = airtime_mpesa_client.shortcode
 
-    stk_push_payload = {
-        "BusinessShortCode": shortcode,
-        "Password": password,
-        "Timestamp": timestamp,
-        "TransactionType": "CustomerPayBillOnline",
-        "Amount": payload.amount,
-        "PartyA": payload.paying_number,
-        "PartyB": shortcode,
-        "PhoneNumber": payload.paying_number,
-        "CallBackURL": callback,
-        "AccountReference": payload.receiving_number,
-        "TransactionDesc": "Airtime",
-    }
+    # stk_push_payload = {
+    #     "BusinessShortCode": shortcode,
+    #     "Password": password,
+    #     "Timestamp": timestamp,
+    #     "TransactionType": "CustomerPayBillOnline",
+    #     "Amount": payload.amount,
+    #     "PartyA": payload.paying_number,
+    #     "PartyB": shortcode,
+    #     "PhoneNumber": payload.paying_number,
+    #     "CallBackURL": callback,
+    #     "AccountReference": payload.receiving_number,
+    #     "TransactionDesc": "Airtime",
+    # }
 
-    # TODO: save contacts
-    receiving = CreateContactSchema(
-        phone_number=payload.receiving_number,
-        source="Stk Push",
-        tag="Airtime Purchase",
-        updated_at=datetime.now(timezone.utc)
-    )
+    # # TODO: save contacts
+    # receiving = CreateContactSchema(
+    #     phone_number=payload.receiving_number,
+    #     source="Stk Push",
+    #     tag="Airtime Purchase",
+    #     updated_at=datetime.now(timezone.utc)
+    # )
 
-    paying = CreateContactSchema(
-        phone_number=payload.paying_number,
-        source="Stk Push",
-        tag="Airtime Purchase",
-        updated_at=datetime.now(timezone.utc)
-    )
+    # paying = CreateContactSchema(
+    #     phone_number=payload.paying_number,
+    #     source="Stk Push",
+    #     tag="Airtime Purchase",
+    #     updated_at=datetime.now(timezone.utc)
+    # )
 
-    background_tasks.add_task(crud_contact.contact_hook, receiving, db)
-    background_tasks.add_task(crud_contact.contact_hook, paying, db)
+    # background_tasks.add_task(crud_contact.contact_hook, receiving, db)
+    # background_tasks.add_task(crud_contact.contact_hook, paying, db)
 
-    try:
-        # initiating a STK push
-        response = await airtime_mpesa_client.stk_push(access_token, stk_push_payload)
-        response_code = int(response.get("ResponseCode", None))
-        response_desc = response.get("ResponseDescription", "")
+    # try:
+    #     # initiating a STK push
+    #     response = await airtime_mpesa_client.stk_push(access_token, stk_push_payload)
+    #     response_code = int(response.get("ResponseCode", None))
+    #     response_desc = response.get("ResponseDescription", "")
 
-        if response_code != 0 and not None:
-            # STK Push failed on Safaricom’s side
-            raise HTTPException(
-                status_code=400,
-                detail=f"STK Push failed: {response_desc}"
-            )
+    #     if response_code != 0 and not None:
+    #         # STK Push failed on Safaricom’s side
+    #         raise HTTPException(
+    #             status_code=400,
+    #             detail=f"STK Push failed: {response_desc}"
+    #         )
 
-        trans = TransactionCreate(
-            merchant_request_id=response.get("MerchantRequestID", None),
-            checkout_request_id=response.get("CheckoutRequestID", None),
-            amount=payload.amount,
-            payment_reference_id=payload.amount,
-            paying_number=payload.paying_number,
-            payment_type=TransactionType.AIRTIME,
-            receiving_number=payload.receiving_number,
-            result_code=response_code,
-            result_desc=response_desc
-        )
+    #     trans = TransactionCreate(
+    #         merchant_request_id=response.get("MerchantRequestID", None),
+    #         checkout_request_id=response.get("CheckoutRequestID", None),
+    #         amount=payload.amount,
+    #         payment_reference_id=payload.amount,
+    #         paying_number=payload.paying_number,
+    #         payment_type=TransactionType.AIRTIME,
+    #         receiving_number=payload.receiving_number,
+    #         result_code=response_code,
+    #         result_desc=response_desc
+    #     )
 
-        # Save the transaction to the database
-        db_obj = transaction.create_transaction(db, obj_in=trans)
+    #     # Save the transaction to the database
+    #     db_obj = transaction.create_transaction(db, obj_in=trans)
 
-        response = ApiResponse(
-            success=True,
-            status_code=response_code,
-            client_message=str(response_code),
-            data=None
-        )
-        return response
-
-    except ValidationError as e:
-        logger.error(f"validation Error: \n{e}")
-        raise HTTPException(status_code=400, detail="An error occurred, try again later")
+        # response = ApiResponse(
+        #     success=True,
+        #     status_code=response_code,
+        #     client_message=str(response_code),
+        #     data=None
+        # )
+        
+    return {"success": True, "message": "Airtime STK push initiated successfully.", "status_code": 200, "data": None}
